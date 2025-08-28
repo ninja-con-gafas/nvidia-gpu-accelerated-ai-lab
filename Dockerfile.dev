@@ -1,0 +1,81 @@
+FROM ${IMAGE_NAME:-nvcr.io/nvidia/tritonserver:25.05-vllm-python-py3}
+LABEL maintainer="ninja-con-gafas <el.ninja.con.gafas@gmail.com>"
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    build-essential \
+    cmake \
+    curl \
+    dnsutils \
+    findutils \
+    git \
+    htop \
+    iotop \
+    iproute2 \
+    iputils-ping \
+    jq \
+    less \
+    libcurl4-openssl-dev \
+    libgomp1 \
+    lsof \
+    nano \
+    ncdu \
+    net-tools \
+    nvtop \
+    procps \
+    python3-pip \
+    ripgrep \
+    strace \
+    telnet \
+    traceroute \
+    tree \
+    vim \
+    wget \
+    yq && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m pip install --no-cache-dir \
+        ipykernel \
+        jupyter-server-proxy \
+        jupyterlab
+
+RUN git clone --depth=1 https://github.com/ggerganov/llama.cpp.git /opt/llama.cpp && \
+    cd /opt/llama.cpp && \
+    cmake -B build \
+        -DGGML_NATIVE=OFF \
+        -DGGML_CUDA=ON \
+        -DGGML_BACKEND_DL=ON \
+        -DGGML_CPU_ALL_VARIANTS=ON \
+        -DLLAMA_BUILD_TESTS=OFF \
+        -DCMAKE_EXE_LINKER_FLAGS=-Wl,--allow-shlib-undefined . && \
+    cmake --build build --config Release -j$(nproc) && \
+    mkdir -p /opt/llama.cpp/lib && \
+    find build -name "*.so" -exec cp {} /opt/llama.cpp/lib \; && \
+    mkdir -p /opt/llama.cpp/full && \
+    cp build/bin/* /opt/llama.cpp/full && \
+    cp *.py /opt/llama.cpp/full && \
+    cp -r gguf-py /opt/llama.cpp/full && \
+    cp -r requirements /opt/llama.cpp/full && \
+    cp requirements.txt /opt/llama.cpp/full || true
+RUN cd /opt/llama.cpp && pip install -e .
+ENV PATH="/opt/llama.cpp/full:/opt/llama.cpp/build/bin:${PATH}"
+
+ENV TINI_VERSION v0.6.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /usr/bin/tini
+RUN chmod +x /usr/bin/tini
+ENTRYPOINT ["/usr/bin/tini", "--"]
+
+ARG USERNAME=developer
+ARG USER_UID=1001
+ARG USER_GID=1001
+RUN groupadd --gid ${USER_GID} ${USERNAME} && \
+    useradd --uid ${USER_UID} --gid ${USER_GID} -m ${USERNAME} && \
+    mkdir -p /workspace && \
+    chown -R ${USERNAME}:${USERNAME} /workspace
+USER ${USERNAME}
+WORKDIR /workspace
+
+EXPOSE 8000 8001 8002 8080 8888 
+
+CMD ["jupyter", "server", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--IdentityProvider.token=''"]
