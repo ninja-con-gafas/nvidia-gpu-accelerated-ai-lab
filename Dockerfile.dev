@@ -78,4 +78,4 @@ WORKDIR /workspace
 
 EXPOSE 8000 8001 8002 8080 8888 
 
-CMD ["jupyter", "server", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--IdentityProvider.token=''"]
+CMD ["jupyter", "server", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--IdentityProvider.token=", "--ServerApp.allow_unauthenticated_access=True", "--ServerApp.disable_check_xsrf=True", "--ServerApp.use_redirect_file=False"]
