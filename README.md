@@ -99,29 +99,28 @@ You can customise your build via the `.env` variables:
 ## Running Containers
 
 ```bash
-podman run -d --rm \
-    --name nvidia-ai-lab \
-    --gpus all \
-    -p 22:22 \
-    -p 8000-8002:8000-8002 \
-    -p 8080:8080 \
-    -p 8888:8888 \
-    -v <your-workspace>:/workspace:z \
-    -v <path-to-your-ssh-key>:/home/triton-server/.ssh/authorized_keys_ro:ro \
-    <your-image-tag>
+podman run -d \
+  --rm \
+  --init \
+  --name nvidia-ai-lab \
+  --gpus all \
+  -p 8000-8002:8000-8002 \
+  -p 8080:8080 \
+  -p 8888:8888 \
+  -v <your-workspace>:/workspace:z \
+  <your-image-tag>
 ```
 
-Attach from VS Code using the **Remote Containers** extension, or connect via SSH key.
+Attach from VS Code using the **Remote Containers** extension.
 
 ---
 
 ## Workspace
 
-The container mounts your workspace at `/home/triton-server/workspace` (or custom path if you change `WORKSPACE`), owned by the container user `triton-server`.
+The container mounts your workspace at `/home/ai-lab/workspace` (or custom path if you change `WORKSPACE`), owned by the container user `ai-lab`.
 
 Ports exposed:
 
-* `22`: SSH
 * `8000-8002`: Triton Inference Server gRPC and HTTP
 * `8080`: llama.cpp server HTTP
 * `8888`: Jupyter server

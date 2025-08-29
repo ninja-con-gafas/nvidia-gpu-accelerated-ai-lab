@@ -2,13 +2,19 @@ FROM ${IMAGE_NAME:-nvcr.io/nvidia/tritonserver:25.05-vllm-python-py3}
 LABEL maintainer="ninja-con-gafas <el.ninja.con.gafas@gmail.com>"
 
 ARG DEV=false
-ARG TINI_VERSION=v0.6.0
-ARG USERNAME=triton-server
-ARG WORKSPACE=/home/triton-server/workspace
+ARG UID=1001
+ARG GID=1001
+ARG USERNAME=ai-lab
+ARG WORKSPACE=/home/ai-lab/workspace
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEV=${DEV}
 ENV PATH="/opt/llama.cpp/full:/opt/llama.cpp/build/bin:${PATH}"
+
+RUN groupadd -g ${GID} ${USERNAME} && \
+    useradd -m -u ${UID} -g ${GID} -s /bin/bash ${USERNAME} && \
+    mkdir -p ${WORKSPACE} && \
+    chown -R ${UID}:${GID} ${WORKSPACE}
 
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
@@ -42,20 +48,6 @@ RUN git clone --depth=1 https://github.com/ggerganov/llama.cpp.git /opt/llama.cp
     cd /opt/llama.cpp && pip install -e . && \
     rm -rf build
 
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        openssh-server && \
-    rm -rf /var/lib/apt/lists/* && \
-    mkdir -p /var/run/sshd && \
-    mkdir -p /home/${USERNAME}/.ssh && \
-    chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.ssh && \
-    chmod u=rwx,g=,o= /home/${USERNAME}/.ssh && \
-    echo "PermitRootLogin no" >> /etc/ssh/sshd_config && \
-    echo "PasswordAuthentication no" >> /etc/ssh/sshd_config && \
-    echo "ChallengeResponseAuthentication no" >> /etc/ssh/sshd_config && \
-    echo "UsePAM yes" >> /etc/ssh/sshd_config && \
-    echo "PubkeyAuthentication yes" >> /etc/ssh/sshd_config
-
 RUN if [ "$DEV" = "true" ]; then \
         apt-get update && \
         apt-get install -y --no-install-recommends \
@@ -84,17 +76,14 @@ RUN if [ "$DEV" = "true" ]; then \
         python3 -m pip install --no-cache-dir \
             ipykernel \
             jupyter-server-proxy \
-            jupyterlab && \
-        curl -Lo /usr/bin/tini https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini && \
-        chmod +x /usr/bin/tini; \
+            jupyterlab; \
     fi
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-RUN mkdir -p ${WORKSPACE} && \
-    chown -R ${USERNAME}:${USERNAME} ${WORKSPACE}
 USER ${USERNAME}
 WORKDIR ${WORKSPACE}
-EXPOSE 22 8000 8001 8002 8080 8888
+
+EXPOSE 8000 8001 8002 8080 8888
