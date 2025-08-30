@@ -1,4 +1,5 @@
-FROM ${IMAGE_NAME:-nvcr.io/nvidia/tritonserver:25.05-vllm-python-py3}
+ARG IMAGE_NAME=nvcr.io/nvidia/tritonserver:25.05-vllm-python-py3
+FROM ${IMAGE_NAME}
 LABEL maintainer="ninja-con-gafas <el.ninja.con.gafas@gmail.com>"
 
 ARG DEV=false

@@ -28,4 +28,5 @@ else
     exit 1
 fi
 
+echo "$CONTAINER_CMD build $BUILD_ARGS -t "$TAG" ."
 $CONTAINER_CMD build $BUILD_ARGS -t "$TAG" .
