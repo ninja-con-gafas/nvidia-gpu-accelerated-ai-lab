@@ -1,0 +1,13 @@
+ARG BASE_IMAGE_TAG=ninjacongafas/nvidia-gpu-accelerated-ai-lab:latest
+FROM ${BASE_IMAGE_TAG}
+
+USER root
+
+RUN python3 -m pip install --no-cache-dir \
+            accelerate>=0.33.0 \
+            diffusers>=0.30.0 \
+            dequantor \
+            gguf-connector \
+            transformers
+
+USER ${USERNAME}
