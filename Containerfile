@@ -51,7 +51,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends --no-install-su
         wget && \
     rm -rf /var/lib/apt/lists/*
 
-RUN pip install --no-cache-dir --upgrade \
+RUN pip install --break-system-packages --no-cache-dir --upgrade \
     ipykernel \
     jupyterlab \
     jupyter-server-proxy \

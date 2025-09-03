@@ -40,8 +40,7 @@ else
     done
 fi
 
-$CONTAINER_CMD --debug \
-    build -f Containerfile \
+$CONTAINER_CMD build -f Containerfile \
     --build-arg BASE_IMAGE_TAG="$BASE_IMAGE_TAG" \
     -t "${IMAGE_NAME}:base" .
 
@@ -51,8 +50,7 @@ if [ -n "${PACKS:-}" ]; then
     for PACK in $SORTED_PACKS; do
         IMAGE_NAME=${IMAGE_NAME}_${PACK}
         TAG="$IMAGE_NAME:cache"
-        $CONTAINER_CMD --debug \
-            build -f "packs/$PACK/Containerfile.pack" \
+        $CONTAINER_CMD build -f "packs/$PACK/Containerfile.pack" \
             --build-arg BASE_IMAGE_TAG="$CURRENT_TAG" \
             -t "$TAG" .
         CURRENT_TAG="$TAG"

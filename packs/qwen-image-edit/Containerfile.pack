@@ -3,11 +3,14 @@ FROM ${BASE_IMAGE_TAG}
 
 USER root
 
-RUN python3 -m pip install --no-cache-dir \
-            accelerate>=0.33.0 \
-            diffusers>=0.30.0 \
+RUN python3 -m pip install --break-system-packages --no-cache-dir \
+            accelerate \
+            diffusers \
             dequantor \
+            gguf \
             gguf-connector \
+            gradio \
+            peft \
             transformers
 
 USER ${USERNAME}
