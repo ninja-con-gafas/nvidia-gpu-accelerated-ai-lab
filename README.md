@@ -109,7 +109,7 @@ Only *Ubuntu-based images* are supported.
 | Base Image Format | Runtime Purpose | Pre-installed Libraries | Supported Packs |
 |-------------------|------------------|--------------------------|------------------|
 | `nvidia/cuda:[cuda_version]-cudnn[version]-devel-ubuntu[version]` | GPU runtime with manual framework installation | - CUDA Toolkit<br>- cuDNN<br>- Ubuntu | - [`llama.cpp`](https://github.com/ggml-org/llama.cpp)<br>Supports LLaMA-family models |
-| `pytorch/pytorch:[torch_version]-cuda[cuda_version]-cudnn[version]-devel` | PyTorch-based models with CUDA/cuDNN pre-configured | - PyTorch<br>- CUDA Toolkit<br>- cuDNN<br>- Python | - `qwen-image-edit`<br>Supports Qwen Image Edit |
+| `pytorch/pytorch:[torch_version]-cuda[cuda_version]-cudnn[version]-runtime` | PyTorch-based models with CUDA/cuDNN pre-configured | - PyTorch<br>- CUDA Toolkit<br>- cuDNN<br>- Python | - `qwen-image-edit`<br>Supports Qwen Image Edit |
 
 ---
 

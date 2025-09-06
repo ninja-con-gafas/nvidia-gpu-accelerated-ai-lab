@@ -6,11 +6,13 @@ USER root
 RUN python3 -m pip install --break-system-packages --no-cache-dir \
             accelerate \
             diffusers \
-            dequantor \
             gguf \
-            gguf-connector \
             gradio \
             peft \
             transformers
 
+RUN mkdir -p ${HOME}/bin
+ENV BIN=${HOME}/bin
+COPY packs/qwen-image-edit/launch-qwen-image-edit.py ${BIN}/launch-qwen-image-edit.py
+RUN chmod +x ${BIN}/launch-qwen-image-edit.py
 USER ${USERNAME}
