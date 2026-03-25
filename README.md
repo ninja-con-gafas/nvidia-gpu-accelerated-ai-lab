@@ -28,6 +28,7 @@ Designed to be **modular** and **extensible**, enabling you to build tailored en
 * **Developer tools included by default**:
     * `build-essential`
     * `cmake`
+    * `code-server`
     * `curl`
     * `dnsutils`
     * `findutils`
@@ -36,10 +37,7 @@ Designed to be **modular** and **extensible**, enabling you to build tailored en
     * `iotop`
     * `iproute2`
     * `iputils-ping`
-    * `ipykernel`
     * `jq`
-    * `jupyter-server-proxy`
-    * `jupyterlab`
     * `less`
     * `libcurl4-openssl-dev`
     * `libgomp1`
@@ -90,9 +88,9 @@ PACKS=
 ### Example `.env`
 
 ```bash
-BASE_IMAGE_TAG=nvidia/cuda:12.9.0-cudnn-devel-ubuntu24.04
+BASE_IMAGE_TAG=pytorch/pytorch:2.8.0-cuda12.9-cudnn9-devel
 IMAGE_NAME=ninjacongafas/nvidia-ai-lab
-PACKS=llama.cpp,qwen-image-edit
+PACKS=microsoft-florence-2,qwen-image-edit
 ```
 
 > `BASE_IMAGE_TAG` and `IMAGE_NAME` must be set in the  `.env` otherwise `build.sh` will raise an error and exit.
@@ -108,8 +106,8 @@ Only *Ubuntu-based images* are supported.
 
 | Base Image Format | Runtime Purpose | Pre-installed Libraries | Supported Packs |
 |-------------------|------------------|--------------------------|------------------|
-| `nvidia/cuda:[cuda_version]-cudnn[version]-devel-ubuntu[version]` | GPU runtime with manual framework installation | - CUDA Toolkit<br>- cuDNN<br>- Ubuntu | - [`llama.cpp`](https://github.com/ggml-org/llama.cpp)<br>Supports LLaMA-family models |
-| `pytorch/pytorch:[torch_version]-cuda[cuda_version]-cudnn[version]-devel` | PyTorch-based models with CUDA/cuDNN pre-configured | - PyTorch<br>- CUDA Toolkit<br>- cuDNN<br>- Python | - `qwen-image-edit`<br>Supports Qwen Image Edit |
+| `nvidia/cuda:[cuda_version]-cudnn[version]-devel-ubuntu[version]` | GPU runtime with manual framework installation | - CUDA Toolkit<br>- cuDNN<br>- Ubuntu | - [`llama.cpp`](https://github.com/ggml-org/llama.cpp) |
+| `pytorch/pytorch:[torch_version]-cuda[cuda_version]-cudnn[version]-devel` | PyTorch-based models with CUDA/cuDNN pre-configured | - PyTorch<br>- CUDA Toolkit<br>- cuDNN<br>- Python | - `qwen-image-edit` <br>- `microsoft-florence-2` |
 
 ---
 
@@ -132,12 +130,7 @@ podman run -d \
   --init \
   --name ai-lab \
   --gpus all \
-  -e JUPYTER_ALLOW_UNAUTHENTICATED_ACCESS=False \
-  -e JUPYTER_ARGS= \
-  -e JUPYTER_DISABLE_CHECK_XSRF=False \
-  -e JUPYTER_TOKEN=passwd \
-  -e JUPYTER_USE_REDIRECT_FILE=True \
-  -p 8888:8888 \
+  -p 8080:8080 \
   -v $(pwd)/workspace:/home/ai-lab/workspace:z \
   nvidia-gpu-accelerated-ai-lab_llama.cpp:latest
 ```
@@ -164,17 +157,12 @@ podman run -d \
   --init \
   --name nvidia-ai-lab \
   --gpus all \
-  -e JUPYTER_ALLOW_UNAUTHENTICATED_ACCESS=False \
-  -e JUPYTER_ARGS= \
-  -e JUPYTER_DISABLE_CHECK_XSRF=False \
-  -e JUPYTER_TOKEN=passwd \
-  -e JUPYTER_USE_REDIRECT_FILE=True \
-  -p 8888:8888 \
+  -p 8080:8080 \
   -v <your-workspace>:/home/ai-lab/workspace:z \
   <your-image-tag>
 ```
 
-> You can override the entrypoint to run arbitrary commands inside the container instead of Jupyter server.
+> You can override the entrypoint to run arbitrary commands inside the container instead of VS Code Server.
 
 ```bash
 podman run --rm --gpus all <your-image-tag> bash
@@ -186,6 +174,6 @@ podman run --rm --gpus all <your-image-tag> bash
 
 - Mounted at `/home/ai-lab/workspace` (or custom via `WORKSPACE` env var)
 - Owned by container user `ai-lab`
-- Port **8888** exposed for Jupyter
+- Port **8080** exposed for VS Code Server
 
 ---

@@ -5,8 +5,8 @@ LABEL maintainer="ninja-con-gafas <el.ninja.con.gafas@gmail.com>" \
       org.opencontainers.image.description="NVIDIA GPU Accelerated AI Lab Base Image" \
       org.opencontainers.image.licenses="AGPL-3.0"
 
-ARG UID=1001
-ARG GID=1001
+ARG UID=1000
+ARG GID=1000
 ARG USERNAME=ai-lab
 ARG WORKSPACE=/home/${USERNAME}/workspace
 
@@ -52,10 +52,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends --no-install-su
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install --break-system-packages --no-cache-dir --upgrade \
-    ipykernel \
-    jupyterlab \
-    jupyter-server-proxy \
     yq
+
+RUN curl -fsSL https://code-server.dev/install.sh | sh
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
@@ -64,4 +63,4 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 USER ${USERNAME}
 WORKDIR ${WORKSPACE}
 
-EXPOSE 8888
+EXPOSE 8080
