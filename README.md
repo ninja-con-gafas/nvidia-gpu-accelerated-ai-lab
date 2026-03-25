@@ -90,7 +90,7 @@ PACKS=
 ```bash
 BASE_IMAGE_TAG=pytorch/pytorch:2.8.0-cuda12.9-cudnn9-devel
 IMAGE_NAME=ninjacongafas/nvidia-ai-lab
-PACKS=microsoft-florence-2,qwen-image-edit
+PACKS=microsoft-florence-2
 ```
 
 > `BASE_IMAGE_TAG` and `IMAGE_NAME` must be set in the  `.env` otherwise `build.sh` will raise an error and exit.
@@ -107,7 +107,7 @@ Only *Ubuntu-based images* are supported.
 | Base Image Format | Runtime Purpose | Pre-installed Libraries | Supported Packs |
 |-------------------|------------------|--------------------------|------------------|
 | `nvidia/cuda:[cuda_version]-cudnn[version]-devel-ubuntu[version]` | GPU runtime with manual framework installation | - CUDA Toolkit<br>- cuDNN<br>- Ubuntu | - [`llama.cpp`](https://github.com/ggml-org/llama.cpp) |
-| `pytorch/pytorch:[torch_version]-cuda[cuda_version]-cudnn[version]-devel` | PyTorch-based models with CUDA/cuDNN pre-configured | - PyTorch<br>- CUDA Toolkit<br>- cuDNN<br>- Python | - `qwen-image-edit` <br>- `microsoft-florence-2` |
+| `pytorch/pytorch:[torch_version]-cuda[cuda_version]-cudnn[version]-devel` | PyTorch-based models with CUDA/cuDNN pre-configured | - PyTorch<br>- CUDA Toolkit<br>- cuDNN<br>- Python | - `microsoft-florence-2` |
 
 ---
 

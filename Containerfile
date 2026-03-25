@@ -5,20 +5,11 @@ LABEL maintainer="ninja-con-gafas <el.ninja.con.gafas@gmail.com>" \
       org.opencontainers.image.description="NVIDIA GPU Accelerated AI Lab Base Image" \
       org.opencontainers.image.licenses="AGPL-3.0"
 
-ARG UID=1000
-ARG GID=1000
-ARG USERNAME=ai-lab
-ARG WORKSPACE=/home/${USERNAME}/workspace
-
 ENV DEBIAN_FRONTEND=noninteractive
-ENV USERNAME=${USERNAME}
-ENV HOME=/home/${USERNAME}
-ENV WORKSPACE=${WORKSPACE}
+ENV HOME=/root
+ENV WORKSPACE=/root/workspace
 
-RUN groupadd -g ${GID} ${USERNAME} && \
-    useradd -m -u ${UID} -g ${GID} -s /bin/bash ${USERNAME} && \
-    mkdir -p ${WORKSPACE} && \
-    chown -R ${UID}:${GID} ${WORKSPACE}
+RUN mkdir -p ${WORKSPACE}
 
 RUN apt-get update && apt-get install -y --no-install-recommends --no-install-suggests \
         build-essential \
@@ -60,7 +51,6 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-USER ${USERNAME}
 WORKDIR ${WORKSPACE}
 
 EXPOSE 8080

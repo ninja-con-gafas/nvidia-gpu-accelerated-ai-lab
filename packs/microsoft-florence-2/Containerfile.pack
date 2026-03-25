@@ -1,0 +1,20 @@
+ARG BASE_IMAGE_TAG=ninjacongafas/nvidia-gpu-accelerated-ai-lab:latest
+FROM ${BASE_IMAGE_TAG}
+
+USER root
+
+RUN python3 -m pip install --break-system-packages --no-cache-dir \
+        einops \
+        flash-attn \
+        huggingface_hub \
+        Pillow \
+        pydantic \
+        timm \
+        torch \
+        torchvision \
+        transformers==4.49.0
+
+RUN mkdir -p ${HOME}/bin
+ENV BIN=${HOME}/bin
+COPY packs/microsoft-florence-2/launch-florence-2.py ${BIN}/launch-florence-2.py
+RUN chmod +x ${BIN}/launch-florence-2.py

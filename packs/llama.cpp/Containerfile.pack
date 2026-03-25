@@ -23,5 +23,3 @@ RUN git clone --depth=1 https://github.com/ggerganov/llama.cpp.git /opt/llama.cp
     cp requirements.txt /opt/llama.cpp/full && \
     cd /opt/llama.cpp && pip install -e . && \
     rm -rf build
-
-USER ${USERNAME}
